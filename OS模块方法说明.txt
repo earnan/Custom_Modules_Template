@@ -1,0 +1,18 @@
+方法                                  说明
+os.path.abspath(path)	              返回绝对路径(包含文件名的全路径)
+os.path.basename(path)	              去掉路径获取文件名
+os.path.dirname(path)	              返回文件路径
+os.path.isabs(path)	                  判断是否为绝对路径
+os.path.isfile(path)	              判断路径是否为文件
+os.path.isdir(path)	                  判断路径是否为目录
+os.path.join(path1[, path2[, ...]])	  把目录和文件名合成一个路径
+                                      比如os.path.join("C:\\Users\\Administrator\\Desktop"，"data")，返回的路径为C:\Users\Administrator\Desktop\data
+                                      
+os.path.realpath(path)	              返回path的真实路径
+os.path.split(path)	                  把路径分割成 dirname 和 basename，返回一个元组
+os.path.splitdrive(path)	          一般用在 windows 下，返回驱动器名和路径组成的元组
+os.path.splitext(path)	              分割路径，返回路径名和文件扩展名的元组
+os.path.walk(path, visit, arg)	      遍历path，进入每个目录都调用visit函数，visit函数必须有3个参数(arg, dirname, names)，
+                                      dirname表示当前目录的目录名，names代表当前目录下的所有文件名，args则为walk的第三个参数
+
+                               
