@@ -1,5 +1,17 @@
-
-
+#!/usr/bin/python3
+# -*- coding : utf-8 -*-
+##########################################################
+#
+#       Filename:   read_fasta_to_dic.py
+#         Author:   yujie
+#    Description:   read_fasta_to_dic.py
+#        Version:   1.0
+#           Time:   2022/03/11 17:45:37
+#  Last Modified:   2022/03/11 17:45:37
+#        Contact:   hi@arcsona.cn
+#        License:   Copyright (C) 2022
+#
+##########################################################
 import argparse
 from Bio import SeqIO
 import os
@@ -9,8 +21,8 @@ parser = argparse.ArgumentParser(
     add_help=False, usage='\npython3   read_fasta_to_dic')
 optional = parser.add_argument_group('可选项')
 required = parser.add_argument_group('必选项')
-optional.add_argument('-i', '--input',
-                      metavar='[dir]', help='输入gbk所在目录', type=str, default="F:\\ref_tre\\gene\\feature\\Mm_G1.gene.seq", required=False)
+optional.add_argument('-i', '--infile',
+                      metavar='[file]', help='file-path', type=str, default="F:\\ref_tre\\gene\\feature\\Mm_G1.gene.seq", required=False)
 optional.add_argument('-h', '--help', action='help', help='[帮助信息]')
 args = parser.parse_args()
 
@@ -39,8 +51,7 @@ def read_fasta_to_dic(infasta):
 
 
 if __name__ == '__main__':
-    dict_seq = read_fasta_to_dic(
-        'F:\\ref_tre\\gene\\feature\\Mm_G1.gene.seq')
+    dict_seq = read_fasta_to_dic(args.infile)
 
 
 """
