@@ -42,7 +42,7 @@ def read_fasta_to_dic(infasta):
             dict_len[seq_id] = ''
         else:
             dict_seq[seq_id] += line.strip('\n')
-            dict_len[seq_id] += len(line.strip('\n'))
+            dict_len[seq_id] += str(len(line.strip('\n')))
     print(len(dict_seq))
     print(len(dict_len))
     return dict_seq, dict_len
