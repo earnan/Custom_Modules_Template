@@ -14,12 +14,12 @@
 #
 ##########################################################
 def create_var(inlist):
-    createVar = locals()  # 核心是locals()这个内置函数
+    createvar = locals()  # 核心是locals()这个内置函数
     listTemp = inlist
     for i, s in enumerate(listTemp):  # i是listtemp的角标,s是值,这个内置函数是特殊的迭代器
-        createVar['list'+str(s)] = []
-    print(createVar['list9'], createVar['list10'])
-    return createVar['list10']
+        createvar['list'+str(s)] = []
+    print(createvar['list9'], createvar['list10'])
+    return createvar['list10']
 
 
 if __name__ == '__main__':
