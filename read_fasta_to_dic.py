@@ -28,23 +28,23 @@ args = parser.parse_args()
 
 
 def read_fasta_to_dic(infasta):
-    f = open(infasta, 'r')
-    seq_id = ''
-    seq_index = []
-    dict_seq = {}
-    dict_len = {}
-    for line in f:
-        if line.startswith('>'):
-            seq_id = line.strip('\n')
-            seq_index.append(line.replace(
-                "\n", "").replace(">", ""))
-            dict_seq[seq_id] = ''
-            dict_len[seq_id] = ''
-        else:
-            dict_seq[seq_id] += line.strip('\n')
-            dict_len[seq_id] += str(len(line.strip('\n')))
-    print(len(dict_seq))
-    print(len(dict_len))
+    with open(infasta, 'r') as f:
+        seq_id = ''
+        seq_index = []
+        dict_seq = {}
+        dict_len = {}
+        for line in f:
+            if line.startswith('>'):
+                seq_id = line.strip('\n')
+                seq_index.append(line.replace(
+                    "\n", "").replace(">", ""))
+                dict_seq[seq_id] = ''
+                dict_len[seq_id] = ''
+            else:
+                dict_seq[seq_id] += line.strip('\n')
+                dict_len[seq_id] += str(len(line.strip('\n')))
+        print(len(dict_seq))
+        print(len(dict_len))
     return dict_seq, dict_len
 
 
