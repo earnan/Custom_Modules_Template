@@ -29,6 +29,28 @@ args = parser.parse_args()
 
 def read_fasta_to_dic(infasta):
     f = open(infasta, 'r')
+    seq_id = ''
+    seq_index = []
+    dict_seq = {}
+    for line in f:
+        if line.startswith('>'):
+            seq_id = line.strip('\n')
+            seq_index.append(line.replace(
+                "\n", "").replace(">", ""))
+            dict_seq[seq_id] = ''
+        else:
+            dict_seq[seq_id] += line.strip('\n')
+    print(len(dict_seq))
+    return dict_seq
+
+
+if __name__ == '__main__':
+    dict_seq = read_fasta_to_dic(args.infile)
+
+
+"""
+def read_fasta_to_dic(infasta):
+    f = open(infasta, 'r')
     # fo = open(output_file, 'w')
     seq_id = ''
     seq_index = []
@@ -50,11 +72,6 @@ def read_fasta_to_dic(infasta):
     return dict_seq
 
 
-if __name__ == '__main__':
-    dict_seq = read_fasta_to_dic(args.infile)
-
-
-"""
 def readfasta(input_file, output_file):
     fa = open(input_file, 'r')
     fo = open(output_file, 'w')
@@ -62,7 +79,6 @@ def readfasta(input_file, output_file):
     index = []
     seq = {}
     rres = []
-
     for line in fa:
         # 如果是">"开头的，就创建一个key键
         if line.startswith('>'):
@@ -82,7 +98,7 @@ def readfasta(input_file, output_file):
     return rres
 
 
-# seq_list = readfasta('14_1sample_in.txt', '14_1output.txt')
+seq_list = readfasta('14_1sample_in.txt', '14_1output.txt')
 seq_list = readfasta(
     'F:\\ref_tre\\gene\\feature\\Mm_G1.gene.seq', 'F:\\ref_tre\\gene\\feature\\Mm_G1.gene.out.txt')
 """
