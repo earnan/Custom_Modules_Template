@@ -154,16 +154,23 @@ def get_cds(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序列,
     complete_note, seq_id = get_complete_note(seq_record)
     complete_fasta = format_fasta(complete_note, complete_seq, 70)  # 70换行本例不采用
     """cds序列"""
+    cds_fasta = ""
     count_cds = 0  # 对cds数量计数
     count_trna = 0
     count_rrna = 0
-    cds_fasta = ""
+    cds_str = ""
+    trna_str = ""
+    rrna_str = ""
     for ele in seq_record.features:
         # ic(ele.type)
         if ele.type == "tRNA":
             count_trna += 1
+            #trna_note, trna_seq = get_cds_note(ele, complete_seq, seq_id)
+            #trna_str += trna_seq
         elif ele.type == "rRNA":
             count_rrna += 1
+            #rrna_note, rrna_seq = get_cds_note(ele, complete_seq, seq_id)
+            #rrna_str += rrna_seq
         elif ele.type == "CDS":
             count_cds += 1
             # l_strand = []  # 正负链标志 -1 1 1
@@ -171,26 +178,31 @@ def get_cds(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序列,
             # print(ele1.strand)  # -1 1 1
             # l_strand.append(ele1.strand)
             cds_note, cds_seq = get_cds_note(ele, complete_seq, seq_id)
+            cds_str += cds_seq
             cds_fasta += format_fasta(cds_note, cds_seq, 70)  # cds放一个字符串里
+
             if (flag):  # ele有可能是trna,要确保先找到一个cds后才能退出,所以放上面if的下一级
                 break
     print('文件{0}有{1}个CDS {2}个trna {3}个rrna'.format(
         os.path.basename(gbk_file), count_cds, count_trna, count_rrna))
-    return cds_fasta, complete_fasta, count_cds, count_trna, count_rrna, os.path.basename(gbk_file)
+    # , trna_str, rrna_str
+    return os.path.basename(gbk_file), complete_fasta, cds_fasta, count_cds, count_trna, count_rrna,  complete_seq, cds_str
 
 
 if __name__ == '__main__':
     file_list = os.listdir(args.input)
     file_list.sort()  # key=lambda x: int(x.split('.')[0])) #根据文件名中的数字
     for file in file_list:
-        cds_fasta, complete_fasta, count_cds, count_trna, count_rrna, file_name = get_cds(
+        file_name, complete_fasta, cds_fasta, count_cds, count_trna, count_rrna,  complete_seq, cds_str = get_cds(
             os.path.join(args.input, file), False)
         # cds_fasta, complete_fasta = get_cds(genbank_dir_path + os.sep + file, False)#另一种写法
         with open((args.output+os.sep+file_name.rstrip('.gbk')+'_complete.fasta'), 'w') as f_complete, open((args.output+os.sep+file_name.rstrip('.gbk')+'_cds.fasta'), 'w') as f_cds:
             f_complete.write(complete_fasta)
             f_cds.write(cds_fasta)
-
-    gc_count('TATAATATATAATATTTAGGATATAATTATATAATTATATATATATTTATATTTTTAGGATATAATTATATATATATTTTATTAAATTTATGGGCGAACGACGGGAATTGAACCCGCGCATGGTGGATTCACAATCCACTG')
+    gc_count(complete_seq)
+    gc_count(cds_str)
+    # gc_count(trna_str)
+    # gc_count(rrna_str)
 
 ###############################################################
 end_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
