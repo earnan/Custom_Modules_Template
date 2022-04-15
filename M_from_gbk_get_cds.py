@@ -128,7 +128,7 @@ def merge_sequence(ele, complete_seq):  # 合并获取到的序列
     return tmp_list, cds_seq
 
 
-def get_cds_note(ele, complete_seq, seq_id):  # 获取cds的id
+def get_cds(ele, complete_seq, seq_id):  # 获取cds的id
     if len(ele.location.parts) == 3:
         tmp_list, cds_seq = merge_sequence(ele, complete_seq)
         cds_note = ">" + seq_id + " [" + tmp_list[0]+".." + tmp_list[1]+';' + tmp_list[2]+".." + tmp_list[3]+';' + \
@@ -145,6 +145,10 @@ def get_cds_note(ele, complete_seq, seq_id):  # 获取cds的id
             " [gene=" + ele.qualifiers['gene'][0] + "]" + \
             "\n"    # '>'后的格式和已有脚本兼容
     return cds_note, cds_seq
+
+
+def get_trna_note(ele, complete_seq, seq_id):
+    return 0
 
 
 def gbk_parse(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序列,完整序列,基因数量,文件名
@@ -177,7 +181,7 @@ def gbk_parse(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序�
             # for ele1 in ele.location.parts:
             # print(ele1.strand)  # -1 1 1
             # l_strand.append(ele1.strand)
-            cds_note, cds_seq = get_cds_note(ele, complete_seq, seq_id)
+            cds_note, cds_seq = get_cds(ele, complete_seq, seq_id)
             cds_str += cds_seq
             cds_fasta += format_fasta(cds_note, cds_seq, 70)  # cds放一个字符串里
 
