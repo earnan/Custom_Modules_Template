@@ -18,15 +18,16 @@ from Bio.Seq import Seq
 import os
 import re
 import time
+from icecream import ic
 
 parser = argparse.ArgumentParser(
     add_help=False, usage='\npython3   M_from_gbk_get_cds.py\n显示完整位置')
 optional = parser.add_argument_group('可选项')
 required = parser.add_argument_group('必选项')
 optional.add_argument('-i', '--input',
-                      metavar='[dir]', help='输入gbk所在目录', type=str, default='E:\\Examples\\from_gbk_get_cds\\gbk', required=False)
+                      metavar='[dir]', help='输入gbk所在目录', type=str, default='F:\\2511\\gbk', required=False)
 optional.add_argument('-o', '--output',
-                      metavar='[dir]', help='输出的路径', type=str, default="E:\\Examples\\from_gbk_get_cds\\out", required=False)
+                      metavar='[dir]', help='输出的路径', type=str, default="F:\\2511\\out", required=False)
 optional.add_argument('-h', '--help', action='help', help='[帮助信息]')
 args = parser.parse_args()
 
@@ -140,9 +141,15 @@ def get_cds(gbk_file, flag):  # 解析genbank文件
     complete_fasta = format_fasta(complete_note, complete_seq, 70)  # 70换行本例不采用
     """cds序列"""
     count_cds = 0  # 对cds数量计数
+    count_trna = 0
+    count_rrna = 0
     cds_fasta = ""
     for ele in seq_record.features:
-        if ele.type == "CDS":
+        if ele.type == "tRNA":
+            count_trna += 1
+        elif ele.type == "rRNA":
+            count_rrna += 1
+        elif ele.type == "CDS":
             count_cds += 1
             # l_strand = []  # 正负链标志 -1 1 1
             # for ele1 in ele.location.parts:
@@ -152,7 +159,8 @@ def get_cds(gbk_file, flag):  # 解析genbank文件
             cds_fasta += format_fasta(cds_note, cds_seq, 70)  # cds放一个字符串里
             if (flag):  # ele有可能是trna,要确保先找到一个cds后才能退出,所以放上面if的下一级
                 break
-    print('文件{0}有{1}个CDS'.format(os.path.basename(gbk_file), count_cds))
+    print('文件{0}有{1}个CDS {2}个trna {3}个rrna'.format(
+        os.path.basename(gbk_file), count_cds, count_trna, count_rrna))
     return cds_fasta, complete_fasta, count_cds, os.path.basename(gbk_file)
 
 
