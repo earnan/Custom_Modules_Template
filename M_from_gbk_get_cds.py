@@ -184,7 +184,6 @@ def gbk_parse(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序�
             cds_note, cds_seq = get_cds(ele, complete_seq, seq_id)
             cds_str += cds_seq
             cds_fasta += format_fasta(cds_note, cds_seq, 70)  # cds放一个字符串里
-
             if (flag):  # ele有可能是trna,要确保先找到一个cds后才能退出,所以放上面if的下一级
                 break
     print('文件{0}有{1}个CDS {2}个trna {3}个rrna'.format(
