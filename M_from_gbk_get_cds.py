@@ -44,7 +44,7 @@ def format_fasta(note, seq, num):
     for index, char in enumerate(seq):
         format_seq += char
         # if (index + 1) % num == 0:#可以用来换行
-        #format_seq += "\n"
+        # format_seq += "\n"
     return note.strip() + "\n" + format_seq + "\n"
 
 
@@ -66,20 +66,15 @@ def ir(s):  # 反向互补
 def gc_count(seq):
     seq = seq.upper()
     basesum = len(seq)  # 碱基总个数
-    no_c, no_g, no_a, no_t, no_n = 0, 0, 0, 0, 0  # 各碱基数量
-    no_c += seq.count('C')
-    no_g += seq.count('G')
-    no_a += seq.count('A')
-    no_t += seq.count('T')
-    no_n += seq.count('N')
     print(basesum)
-    print("总碱基数目:", basesum)
-    print("A百分比", "%.1f" % ((float(no_a*100))/basesum), '%')
-    print("T百分比", "%.1f" % ((float(no_t*100))/basesum), '%')
-    print("C百分比", "%.1f" % ((float(no_c*100))/basesum), '%')
-    print("G百分比", "%.1f" % ((float(no_g*100))/basesum), '%')
-    print("N百分比", "%.1f" % ((float(no_n*100))/basesum), '%')
-    print("GC含量是", "%.1f" % ((float(no_g*100+no_c*100))/basesum), '%')
+    no_a = float(seq.count('A')*100)/basesum
+    no_t = float(seq.count('T')*100)/basesum
+    no_g = float(seq.count('G')*100)/basesum
+    no_c = float(seq.count('C')*100)/basesum
+    no_gc = float(seq.count('G')*100+seq.count('C')*100)/basesum
+    no_at = float(seq.count('A')*100+seq.count('T')*100)/basesum
+    print('{0:.2f} {1:.2f} {2:.2f} {3:.2f} {4:.2f} {5:.2f}'.format(
+        no_a, no_t, no_g, no_c, no_gc, no_at))
     return 0
 
 
