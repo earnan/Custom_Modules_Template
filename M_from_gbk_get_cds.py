@@ -66,16 +66,15 @@ def ir(s):  # 反向互补
 def gc_count(seq):
     seq = seq.upper()
     basesum = len(seq)  # 碱基总个数
-    print(basesum)
     no_a = float(seq.count('A')*100)/basesum
     no_t = float(seq.count('T')*100)/basesum
     no_g = float(seq.count('G')*100)/basesum
     no_c = float(seq.count('C')*100)/basesum
     no_gc = float(seq.count('G')*100+seq.count('C')*100)/basesum
     no_at = float(seq.count('A')*100+seq.count('T')*100)/basesum
-    print('{0:.2f} {1:.2f} {2:.2f} {3:.2f} {4:.2f} {5:.2f}'.format(
-        no_a, no_t, no_g, no_c, no_gc, no_at))
-    return 0
+    print("basesum:{0} A:{1:.2f}% T:{2:.2f}% G:{3:.2f}% C:{4:.2f}% GC:{5:.2f}% AT:{6:.2f}%".format(
+        basesum, no_a, no_t, no_g, no_c, no_gc, no_at))
+    return basesum, no_a, no_t, no_g, no_c, no_gc, no_at
 
 
 def merge_sequence(ele, complete_seq):  # 合并获取到的序列
