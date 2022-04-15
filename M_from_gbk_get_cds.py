@@ -63,6 +63,26 @@ def ir(s):  # 反向互补
     return c
 
 
+def gc_count(seq):
+    seq = seq.upper()
+    basesum = len(seq)  # 碱基总个数
+    no_c, no_g, no_a, no_t, no_n = 0, 0, 0, 0, 0  # 各碱基数量
+    no_c += seq.count('C')
+    no_g += seq.count('G')
+    no_a += seq.count('A')
+    no_t += seq.count('T')
+    no_n += seq.count('N')
+    print(basesum)
+    print("总碱基数目:", basesum)
+    print("A百分比", "%.1f" % ((float(no_a*100))/basesum), '%')
+    print("T百分比", "%.1f" % ((float(no_t*100))/basesum), '%')
+    print("C百分比", "%.1f" % ((float(no_c*100))/basesum), '%')
+    print("G百分比", "%.1f" % ((float(no_g*100))/basesum), '%')
+    print("N百分比", "%.1f" % ((float(no_n*100))/basesum), '%')
+    print("GC含量是", "%.1f" % ((float(no_g*100+no_c*100))/basesum), '%')
+    return 0
+
+
 def merge_sequence(ele, complete_seq):  # 合并获取到的序列
     cds_seq = ""
     tmp_list = []  # 位置列表
@@ -133,7 +153,7 @@ def get_cds_note(ele, complete_seq, seq_id):  # 获取cds的id
     return cds_note, cds_seq
 
 
-def get_cds(gbk_file, flag):  # 解析genbank文件
+def get_cds(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序列,完整序列,基因数量,文件名
     """完整基因组"""
     seq_record = SeqIO.read(gbk_file, "genbank")
     complete_seq = str(seq_record.seq)
@@ -145,6 +165,7 @@ def get_cds(gbk_file, flag):  # 解析genbank文件
     count_rrna = 0
     cds_fasta = ""
     for ele in seq_record.features:
+        # ic(ele.type)
         if ele.type == "tRNA":
             count_trna += 1
         elif ele.type == "rRNA":
@@ -161,14 +182,14 @@ def get_cds(gbk_file, flag):  # 解析genbank文件
                 break
     print('文件{0}有{1}个CDS {2}个trna {3}个rrna'.format(
         os.path.basename(gbk_file), count_cds, count_trna, count_rrna))
-    return cds_fasta, complete_fasta, count_cds, os.path.basename(gbk_file)
+    return cds_fasta, complete_fasta, count_cds, count_trna, count_rrna, os.path.basename(gbk_file)
 
 
 if __name__ == '__main__':
     file_list = os.listdir(args.input)
     file_list.sort()  # key=lambda x: int(x.split('.')[0])) #根据文件名中的数字
     for file in file_list:
-        cds_fasta, complete_fasta, count_cds, file_name = get_cds(
+        cds_fasta, complete_fasta, count_cds, count_trna, count_rrna, file_name = get_cds(
             os.path.join(args.input, file), False)
         # cds_fasta, complete_fasta = get_cds(genbank_dir_path + os.sep + file, False)#另一种写法
         with open((args.output+os.sep+file_name.rstrip('.gbk')+'_complete.fasta'), 'w') as f_complete, open((args.output+os.sep+file_name.rstrip('.gbk')+'_cds.fasta'), 'w') as f_cds:
