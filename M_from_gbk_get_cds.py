@@ -139,11 +139,11 @@ def get_cds(gbk_file, flag):  # 解析genbank文件
     complete_note, seq_id = get_complete_note(seq_record)
     complete_fasta = format_fasta(complete_note, complete_seq, 70)  # 70换行本例不采用
     """cds序列"""
-    count = 0  # 对cds数量计数
+    count_cds = 0  # 对cds数量计数
     cds_fasta = ""
     for ele in seq_record.features:
         if ele.type == "CDS":
-            count += 1
+            count_cds += 1
             # l_strand = []  # 正负链标志 -1 1 1
             # for ele1 in ele.location.parts:
             # print(ele1.strand)  # -1 1 1
@@ -152,15 +152,15 @@ def get_cds(gbk_file, flag):  # 解析genbank文件
             cds_fasta += format_fasta(cds_note, cds_seq, 70)  # cds放一个字符串里
             if (flag):  # ele有可能是trna,要确保先找到一个cds后才能退出,所以放上面if的下一级
                 break
-    print('文件{0}有{1}个CDS'.format(os.path.basename(gbk_file), count))
-    return cds_fasta, complete_fasta, count, os.path.basename(gbk_file)
+    print('文件{0}有{1}个CDS'.format(os.path.basename(gbk_file), count_cds))
+    return cds_fasta, complete_fasta, count_cds, os.path.basename(gbk_file)
 
 
 if __name__ == '__main__':
     file_list = os.listdir(args.input)
     file_list.sort()  # key=lambda x: int(x.split('.')[0])) #根据文件名中的数字
     for file in file_list:
-        cds_fasta, complete_fasta, count, file_name = get_cds(
+        cds_fasta, complete_fasta, count_cds, file_name = get_cds(
             os.path.join(args.input, file), False)
         # cds_fasta, complete_fasta = get_cds(genbank_dir_path + os.sep + file, False)#另一种写法
         with open((args.output+os.sep+file_name.rstrip('.gbk')+'_complete.fasta'), 'w') as f_complete, open((args.output+os.sep+file_name.rstrip('.gbk')+'_cds.fasta'), 'w') as f_cds:
