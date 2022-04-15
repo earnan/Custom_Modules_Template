@@ -147,7 +147,7 @@ def get_cds_note(ele, complete_seq, seq_id):  # 获取cds的id
     return cds_note, cds_seq
 
 
-def get_cds(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序列,完整序列,基因数量,文件名
+def gbk_parse(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序列,完整序列,基因数量,文件名
     """完整基因组"""
     seq_record = SeqIO.read(gbk_file, "genbank")
     complete_seq = str(seq_record.seq)
@@ -193,7 +193,7 @@ if __name__ == '__main__':
     file_list = os.listdir(args.input)
     file_list.sort()  # key=lambda x: int(x.split('.')[0])) #根据文件名中的数字
     for file in file_list:
-        file_name, complete_fasta, cds_fasta, count_cds, count_trna, count_rrna,  complete_seq, cds_str = get_cds(
+        file_name, complete_fasta, cds_fasta, count_cds, count_trna, count_rrna,  complete_seq, cds_str = gbk_parse(
             os.path.join(args.input, file), False)
         # cds_fasta, complete_fasta = get_cds(genbank_dir_path + os.sep + file, False)#另一种写法
         with open((args.output+os.sep+file_name.rstrip('.gbk')+'_complete.fasta'), 'w') as f_complete, open((args.output+os.sep+file_name.rstrip('.gbk')+'_cds.fasta'), 'w') as f_cds:
