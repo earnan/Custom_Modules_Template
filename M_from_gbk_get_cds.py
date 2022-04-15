@@ -39,6 +39,20 @@ print('Start Time : {}'.format(start_time))
 #################################################################
 
 
+def gc_count(seq):
+    seq = seq.upper()
+    basesum = len(seq)  # 碱基总个数
+    no_a = float(seq.count('A')*100)/basesum
+    no_t = float(seq.count('T')*100)/basesum
+    no_g = float(seq.count('G')*100)/basesum
+    no_c = float(seq.count('C')*100)/basesum
+    no_gc = float(seq.count('G')*100+seq.count('C')*100)/basesum
+    no_at = float(seq.count('A')*100+seq.count('T')*100)/basesum
+    print("basesum:{0} A:{1:.2f}% T:{2:.2f}% G:{3:.2f}% C:{4:.2f}% GC:{5:.2f}% AT:{6:.2f}%".format(
+        basesum, no_a, no_t, no_g, no_c, no_gc, no_at))
+    return basesum, no_a, no_t, no_g, no_c, no_gc, no_at
+
+
 def format_fasta(note, seq, num):
     format_seq = ""
     for index, char in enumerate(seq):
@@ -61,43 +75,6 @@ def ir(s):  # 反向互补
         elif i == 'C':
             c = c + 'G'
     return c
-
-
-def gc_count(seq):
-    seq = seq.upper()
-    basesum = len(seq)  # 碱基总个数
-    no_a = float(seq.count('A')*100)/basesum
-    no_t = float(seq.count('T')*100)/basesum
-    no_g = float(seq.count('G')*100)/basesum
-    no_c = float(seq.count('C')*100)/basesum
-    no_gc = float(seq.count('G')*100+seq.count('C')*100)/basesum
-    no_at = float(seq.count('A')*100+seq.count('T')*100)/basesum
-    print("basesum:{0} A:{1:.2f}% T:{2:.2f}% G:{3:.2f}% C:{4:.2f}% GC:{5:.2f}% AT:{6:.2f}%".format(
-        basesum, no_a, no_t, no_g, no_c, no_gc, no_at))
-    return basesum, no_a, no_t, no_g, no_c, no_gc, no_at
-
-
-def merge_sequence(ele, complete_seq):  # 合并获取到的序列
-    cds_seq = ""
-    tmp_list = []  # 位置列表
-    for ele1 in ele.location.parts:
-        if ele1.strand == (-1):
-            # print('minus')
-            tmp_list.append(re.findall(
-                r'\d+', str(ele1.end))[0])  # 实际起点,从end中取不用+1
-            tmp_list.append(str(int(re.findall(
-                r'\d+', str(ele1.start))[0])+1))  # 实际终点,从start取+1
-            cds_seq += ir(complete_seq[ele1.start:ele1.end])
-        elif ele1.strand == (1):
-            # print('plus')
-            tmp_list.append(str(int(re.findall(
-                r'\d+', str(ele1.start))[0])+1))  # 实际起点,要+1
-            tmp_list.append(re.findall(
-                r'\d+', str(ele1.end))[0])  # 实际终点,不用+1
-            # 切片没问题,索引从start到end-1,也就是对应start+1到end的序列
-            cds_seq += complete_seq[ele1.start:ele1.end]
-    # print(tmp_list)
-    return tmp_list, cds_seq
 
 
 def get_complete_note(seq_record):  # 获取整个完整基因组ID
@@ -126,6 +103,29 @@ def get_complete_note(seq_record):  # 获取整个完整基因组ID
         complete_note = ">" + (seq_record.description.split('chloroplast')
                                [0]).replace(' ', '_').rstrip('_') + "\n"
     return complete_note, seq_id
+
+
+def merge_sequence(ele, complete_seq):  # 合并获取到的序列
+    cds_seq = ""
+    tmp_list = []  # 位置列表
+    for ele1 in ele.location.parts:
+        if ele1.strand == (-1):
+            # print('minus')
+            tmp_list.append(re.findall(
+                r'\d+', str(ele1.end))[0])  # 实际起点,从end中取不用+1
+            tmp_list.append(str(int(re.findall(
+                r'\d+', str(ele1.start))[0])+1))  # 实际终点,从start取+1
+            cds_seq += ir(complete_seq[ele1.start:ele1.end])
+        elif ele1.strand == (1):
+            # print('plus')
+            tmp_list.append(str(int(re.findall(
+                r'\d+', str(ele1.start))[0])+1))  # 实际起点,要+1
+            tmp_list.append(re.findall(
+                r'\d+', str(ele1.end))[0])  # 实际终点,不用+1
+            # 切片没问题,索引从start到end-1,也就是对应start+1到end的序列
+            cds_seq += complete_seq[ele1.start:ele1.end]
+    # print(tmp_list)
+    return tmp_list, cds_seq
 
 
 def get_cds_note(ele, complete_seq, seq_id):  # 获取cds的id
