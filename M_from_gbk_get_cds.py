@@ -196,6 +196,8 @@ if __name__ == '__main__':
             f_complete.write(complete_fasta)
             f_cds.write(cds_fasta)
 
+    gc_count('TATAATATATAATATTTAGGATATAATTATATAATTATATATATATTTATATTTTTAGGATATAATTATATATATATTTTATTAAATTTATGGGCGAACGACGGGAATTGAACCCGCGCATGGTGGATTCACAATCCACTG')
+
 ###############################################################
 end_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 print('End Time : {}'.format(end_time))
