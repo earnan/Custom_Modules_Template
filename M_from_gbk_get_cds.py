@@ -46,11 +46,10 @@ def gc_count(seq):
     no_t = float(seq.count('T')*100)/basesum
     no_g = float(seq.count('G')*100)/basesum
     no_c = float(seq.count('C')*100)/basesum
-    no_gc = float(seq.count('G')*100+seq.count('C')*100)/basesum
     no_at = float(seq.count('A')*100+seq.count('T')*100)/basesum
-    print("basesum:{0} A:{1:.2f}% T:{2:.2f}% G:{3:.2f}% C:{4:.2f}% GC:{5:.2f}% AT:{6:.2f}%".format(
-        basesum, no_a, no_t, no_g, no_c, no_gc, no_at))
-    return basesum, no_a, no_t, no_g, no_c, no_gc, no_at
+    no_gc = float(seq.count('G')*100+seq.count('C')*100)/basesum
+    # print("basesum:{0} A:{1:.2f}% T:{2:.2f}% G:{3:.2f}% C:{4:.2f}% AT:{5:.2f}% GC:{6:.2f}%".format(basesum, no_a, no_t, no_g, no_c, no_at, no_gc))
+    return basesum, no_a, no_t, no_g, no_c, no_at, no_gc
 
 
 def format_fasta(note, seq, num):
@@ -211,25 +210,40 @@ def gbk_parse(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序�
             cds_fasta += format_fasta(cds_note, cds_seq, 70)  # cds放一个字符串里
             if (flag):  # ele有可能是trna,要确保先找到一个cds后才能退出,所以放上面if的下一级
                 break
-    print('文件{0}有{1}个CDS {2}个trna {3}个rrna'.format(
-        os.path.basename(gbk_file), count_cds, count_trna, count_rrna))
-    return os.path.basename(gbk_file), complete_fasta, cds_fasta, trna_fasta, rrna_fasta, count_complete, count_cds, count_trna, count_rrna,  complete_seq, cds_str, trna_str, rrna_str
+    print('#ID\tgene\ttRNA\trRNA\tmRNA\tpseudo')
+    print('{0}\t{1}\t{2}\t{3}\t{4}\t{5}'.format(seq_id, (count_cds +
+          count_trna+count_rrna),  count_trna, count_rrna, count_cds, 0))
+    # os.path.basename(gbk_file).rstrip('.gbk'), (count_cds+count_trna+count_rrna),  count_trna, count_rrna, count_cds, 0))
+    return seq_id, os.path.basename(gbk_file), complete_fasta, cds_fasta, trna_fasta, rrna_fasta, count_complete, count_cds, count_trna, count_rrna,  complete_seq, cds_str, trna_str, rrna_str
 
 
 if __name__ == '__main__':
     file_list = os.listdir(args.input)
     file_list.sort()  # key=lambda x: int(x.split('.')[0])) #根据文件名中的数字
     for file in file_list:
-        file_name, complete_fasta, cds_fasta, trna_fasta, rrna_fasta, count_complete, count_cds, count_trna, count_rrna,  complete_seq, cds_str, trna_str, rrna_str = gbk_parse(
+        seq_id, file_name, complete_fasta, cds_fasta, trna_fasta, rrna_fasta, count_complete, count_cds, count_trna, count_rrna,  complete_seq, cds_str, trna_str, rrna_str = gbk_parse(
             os.path.join(args.input, file), False)
         # cds_fasta, complete_fasta = get_cds(genbank_dir_path + os.sep + file, False)#另一种写法
         with open((args.output+os.sep+file_name.rstrip('.gbk')+'_complete.fasta'), 'w') as f_complete, open((args.output+os.sep+file_name.rstrip('.gbk')+'_cds.fasta'), 'w') as f_cds:
             f_complete.write(complete_fasta)
             f_cds.write(cds_fasta)
-    gc_count(complete_seq)
-    gc_count(cds_str)
-    gc_count(trna_str)
-    gc_count(rrna_str)
+    print('{}\tSize(bp)\tA%\tT%\tG%\tC%\tAT%\tGC%'.format(seq_id))
+    # 完整
+    basesum, no_a, no_t, no_g, no_c, no_at, no_gc = gc_count(complete_seq)
+    print('{}\t{}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}'.format(
+        seq_id, basesum, no_a, no_t, no_g, no_c, no_at, no_gc))
+    # cds
+    basesum, no_a, no_t, no_g, no_c, no_at, no_gc = gc_count(cds_str)
+    print('{}\t{}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}'.format(
+        "PCGs", basesum, no_a, no_t, no_g, no_c, no_at, no_gc))
+    # trna
+    basesum, no_a, no_t, no_g, no_c, no_at, no_gc = gc_count(trna_str)
+    print('{}\t{}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}'.format(
+        "tRNAs", basesum, no_a, no_t, no_g, no_c, no_at, no_gc))
+    # rrna
+    basesum, no_a, no_t, no_g, no_c, no_at, no_gc = gc_count(rrna_str)
+    print('{}\t{}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}'.format(
+        "rRNAs", basesum, no_a, no_t, no_g, no_c, no_at, no_gc))
 
 ###############################################################
 end_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
