@@ -129,6 +129,9 @@ def merge_sequence(ele, complete_seq):  # 合并获取到的序列
 
 
 def get_cds(ele, complete_seq, seq_id):  # 获取cds的id
+    cds_note = ''
+    cds_seq = ''
+    print(len(ele.location.parts))
     if len(ele.location.parts) == 3:
         tmp_list, cds_seq = merge_sequence(ele, complete_seq)
         cds_note = ">" + seq_id + " [" + tmp_list[0]+".." + tmp_list[1]+';' + tmp_list[2]+".." + tmp_list[3]+';' + \
@@ -144,10 +147,11 @@ def get_cds(ele, complete_seq, seq_id):  # 获取cds的id
         cds_note = ">" + seq_id + " [" + tmp_list[0]+".." + tmp_list[1]+"]" + \
             " [gene=" + ele.qualifiers['gene'][0] + "]" + \
             "\n"    # '>'后的格式和已有脚本兼容
+    ic(cds_note)
     return cds_note, cds_seq
 
 
-def get_trna_note(ele, complete_seq, seq_id):
+def get_trna(ele, complete_seq, seq_id):
     return 0
 
 
@@ -169,6 +173,9 @@ def gbk_parse(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序�
         # ic(ele.type)
         if ele.type == "tRNA":
             count_trna += 1
+            # ic()
+            # print("tRNA")
+            # ic(ele.location.parts)
             #trna_note, trna_seq = get_cds_note(ele, complete_seq, seq_id)
             #trna_str += trna_seq
         elif ele.type == "rRNA":
@@ -177,6 +184,9 @@ def gbk_parse(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序�
             #rrna_str += rrna_seq
         elif ele.type == "CDS":
             count_cds += 1
+            # ic()
+            print("cds")
+            ic(ele.location.parts)
             # l_strand = []  # 正负链标志 -1 1 1
             # for ele1 in ele.location.parts:
             # print(ele1.strand)  # -1 1 1
