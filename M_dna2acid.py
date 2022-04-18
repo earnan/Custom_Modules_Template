@@ -30,6 +30,7 @@ optional.add_argument('-i', '--input', type=str,
                       metavar='[input]', help='str/file', required=False)
 optional.add_argument('-n', '--number', type=int,
                       metavar='[密码子表]', help='1-11,默认叶绿体11', default=11, required=False)
+optional.add_argument("-l", "--lenth", action="store_true", help="-l触发true")
 optional.add_argument('-h', '--help', action='help', help='[帮助信息]')
 args = parser.parse_args()
 
@@ -41,11 +42,19 @@ def input_format2str(input):
             for line in f:
                 if not line.startswith('>'):
                     seq += line.strip('\n')
+        if args.lenth:
+            seq = len(seq)
     else:
         seq = input
+        if args.lenth:
+            seq = len(seq)
     return seq
 
 
 seq = input_format2str(args.input)
-coding_dna = Seq(seq)
-print(coding_dna.translate(table=args.number))
+if type(seq) == type(''):
+    coding_dna = Seq(seq)
+    print(coding_dna.translate(table=args.number))
+else:
+    if type(seq) == type(1):
+        print(seq)
