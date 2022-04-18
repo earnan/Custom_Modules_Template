@@ -128,11 +128,21 @@ def merge_sequence(ele, complete_seq):  # 合并获取到的序列
     return tmp_list, cds_seq
 
 
-def get_cds(ele, complete_seq, seq_id):  # 获取cds的id
+def get_gene(ele, complete_seq, seq_id):  # 获取cds的id
     cds_note = ''
     cds_seq = ''
-    print(len(ele.location.parts))
-    if len(ele.location.parts) == 3:
+    # ic(len(ele.location.parts))
+    if len(ele.location.parts) == 5:
+        tmp_list, cds_seq = merge_sequence(ele, complete_seq)
+        cds_note = ">" + seq_id + " [" + tmp_list[0]+".." + tmp_list[1]+';' + tmp_list[2]+".." + tmp_list[3]+';' + \
+            tmp_list[4]+".." + tmp_list[5]+';' + tmp_list[6]+".." + tmp_list[7]+';' + tmp_list[8]+".." + tmp_list[9]+"]" + " [gene=" + \
+            ele.qualifiers['gene'][0] + "]" + "\n"  # '>'后的格式和已有脚本兼容
+    elif len(ele.location.parts) == 4:
+        tmp_list, cds_seq = merge_sequence(ele, complete_seq)
+        cds_note = ">" + seq_id + " [" + tmp_list[0]+".." + tmp_list[1]+';' + tmp_list[2]+".." + tmp_list[3]+';' + \
+            tmp_list[4]+".." + tmp_list[5]+';' + tmp_list[6]+".." + tmp_list[7]+"]" + " [gene=" + \
+            ele.qualifiers['gene'][0] + "]" + "\n"  # '>'后的格式和已有脚本兼容
+    elif len(ele.location.parts) == 3:
         tmp_list, cds_seq = merge_sequence(ele, complete_seq)
         cds_note = ">" + seq_id + " [" + tmp_list[0]+".." + tmp_list[1]+';' + tmp_list[2]+".." + tmp_list[3]+';' + \
             tmp_list[4]+".." + tmp_list[5]+"]" + " [gene=" + \
@@ -147,12 +157,12 @@ def get_cds(ele, complete_seq, seq_id):  # 获取cds的id
         cds_note = ">" + seq_id + " [" + tmp_list[0]+".." + tmp_list[1]+"]" + \
             " [gene=" + ele.qualifiers['gene'][0] + "]" + \
             "\n"    # '>'后的格式和已有脚本兼容
-    ic(cds_note)
+    # ic(cds_note)
     return cds_note, cds_seq
 
 
-def get_trna(ele, complete_seq, seq_id):
-    return 0
+# def get_trna(ele, complete_seq, seq_id):
+    # return 0
 
 
 def gbk_parse(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序列,完整序列,基因数量,文件名
@@ -163,6 +173,9 @@ def gbk_parse(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序�
     complete_fasta = format_fasta(complete_note, complete_seq, 70)  # 70换行本例不采用
     """cds序列"""
     cds_fasta = ""
+    trna_fasta = ""
+    rrna_fasta = ""
+    count_complete = 1
     count_cds = 0  # 对cds数量计数
     count_trna = 0
     count_rrna = 0
@@ -173,40 +186,41 @@ def gbk_parse(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序�
         # ic(ele.type)
         if ele.type == "tRNA":
             count_trna += 1
-            # ic()
-            # print("tRNA")
+            # ic("tRNA")
             # ic(ele.location.parts)
-            #trna_note, trna_seq = get_cds_note(ele, complete_seq, seq_id)
-            #trna_str += trna_seq
+            trna_note, trna_seq = get_gene(ele, complete_seq, seq_id)
+            trna_str += trna_seq
+            trna_fasta += format_fasta(trna_note, trna_seq, 70)
         elif ele.type == "rRNA":
             count_rrna += 1
-            #rrna_note, rrna_seq = get_cds_note(ele, complete_seq, seq_id)
-            #rrna_str += rrna_seq
+            # ic("rRNA")
+            # ic(ele.location.parts)
+            rrna_note, rrna_seq = get_gene(ele, complete_seq, seq_id)
+            rrna_str += rrna_seq
+            rrna_fasta += format_fasta(rrna_note, rrna_seq, 70)
         elif ele.type == "CDS":
             count_cds += 1
-            # ic()
-            print("cds")
-            ic(ele.location.parts)
+            # ic("cds")
+            # ic(ele.location.parts)
             # l_strand = []  # 正负链标志 -1 1 1
             # for ele1 in ele.location.parts:
             # print(ele1.strand)  # -1 1 1
             # l_strand.append(ele1.strand)
-            cds_note, cds_seq = get_cds(ele, complete_seq, seq_id)
-            cds_str += cds_seq
+            cds_note, cds_seq = get_gene(ele, complete_seq, seq_id)
+            cds_str += cds_seq  # cds_seq只有碱基序列,下面cds_fasta既有名字也有序列
             cds_fasta += format_fasta(cds_note, cds_seq, 70)  # cds放一个字符串里
             if (flag):  # ele有可能是trna,要确保先找到一个cds后才能退出,所以放上面if的下一级
                 break
     print('文件{0}有{1}个CDS {2}个trna {3}个rrna'.format(
         os.path.basename(gbk_file), count_cds, count_trna, count_rrna))
-    # , trna_str, rrna_str
-    return os.path.basename(gbk_file), complete_fasta, cds_fasta, count_cds, count_trna, count_rrna,  complete_seq, cds_str
+    return os.path.basename(gbk_file), complete_fasta, cds_fasta, trna_fasta, rrna_fasta, count_complete, count_cds, count_trna, count_rrna,  complete_seq, cds_str, trna_str, rrna_str
 
 
 if __name__ == '__main__':
     file_list = os.listdir(args.input)
     file_list.sort()  # key=lambda x: int(x.split('.')[0])) #根据文件名中的数字
     for file in file_list:
-        file_name, complete_fasta, cds_fasta, count_cds, count_trna, count_rrna,  complete_seq, cds_str = gbk_parse(
+        file_name, complete_fasta, cds_fasta, trna_fasta, rrna_fasta, count_complete, count_cds, count_trna, count_rrna,  complete_seq, cds_str, trna_str, rrna_str = gbk_parse(
             os.path.join(args.input, file), False)
         # cds_fasta, complete_fasta = get_cds(genbank_dir_path + os.sep + file, False)#另一种写法
         with open((args.output+os.sep+file_name.rstrip('.gbk')+'_complete.fasta'), 'w') as f_complete, open((args.output+os.sep+file_name.rstrip('.gbk')+'_cds.fasta'), 'w') as f_cds:
@@ -214,8 +228,8 @@ if __name__ == '__main__':
             f_cds.write(cds_fasta)
     gc_count(complete_seq)
     gc_count(cds_str)
-    # gc_count(trna_str)
-    # gc_count(rrna_str)
+    gc_count(trna_str)
+    gc_count(rrna_str)
 
 ###############################################################
 end_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
