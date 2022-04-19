@@ -160,10 +160,6 @@ def get_gene(ele, complete_seq, seq_id):  # 获取cds的id
     return cds_note, cds_seq
 
 
-# def get_trna(ele, complete_seq, seq_id):
-    # return 0
-
-
 def gbk_parse(gbk_file, flag):  # 解析genbank文件,返回该物种的cds序列,完整序列,基因数量,文件名
     """完整基因组"""
     seq_record = SeqIO.read(gbk_file, "genbank")
