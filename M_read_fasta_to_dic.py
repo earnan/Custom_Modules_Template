@@ -37,7 +37,7 @@ def read_fasta_to_dic1(infasta):  # 最简单,针对普通fasta文件 >物种名
         for line in f:
             # 如果是">"开头的，就创建一个key键
             if line.startswith('>'):
-                seq_id = line.strip('\n')  # ID为键
+                seq_id = line.strip('\n')  # ID为键!!!!!!!!注意这里的键 有 >号
                 id_index.append(line.replace(
                     "\n", "").replace(">", ""))  # 顺便创建索引的列表
                 dict_seq[seq_id] = ''  # 有key无value
