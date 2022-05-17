@@ -16,15 +16,15 @@ def create_var(inlist):
     createvar = locals()  # 核心是locals()这个内置函数
     listTemp = inlist
     for i, s in enumerate(listTemp):  # i是listtemp的角标,s是值,这个内置函数是特殊的迭代器
-        createvar['list'+str(s)] = []
-    print(createvar['list9'], createvar['list10'])
-    return createvar['list10']
+        createvar['list_'+str(s)] = []
+    #print(createvar['list_9'], createvar['list_10'])
+    return [createvar['list_'+str(s)] for s in listTemp]
 
 
 if __name__ == '__main__':
     inlist = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    list10 = create_var(inlist)
-    print(list10)
+    for i in create_var(inlist):
+        print(i)
 
 """
 def test_list_pre():
