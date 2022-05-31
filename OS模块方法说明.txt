@@ -1,4 +1,5 @@
 方法                                  说明
+
 os.path.abspath(path)	              返回绝对路径(包含文件名的全路径)
 os.path.basename(path)	              去掉路径获取文件名
 os.path.dirname(path)	              返回文件路径
@@ -16,4 +17,6 @@ os.path.splitext(path)	              分割路径，返回路径名和文件扩�
 os.path.walk(path, visit, arg)	      遍历path，进入每个目录都调用visit函数，visit函数必须有3个参数(arg, dirname, names)，
                                       dirname表示当前目录的目录名，names代表当前目录下的所有文件名，args则为walk的第三个参数
 
-                               
+os.path.exists(path)                  判断一个目录是否存在
+os.makedirs(path)                     多层创建目录
+os.mkdir(path)                        创建目录
