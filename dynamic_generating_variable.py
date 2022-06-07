@@ -12,6 +12,13 @@
 #        License:   Copyright (C) 2022
 #
 ##########################################################
+
+"""有用的就这两句
+createvar = locals()
+createvar['list_'+1] = []
+"""
+
+
 def create_var(inlist):
     createvar = locals()  # 核心是locals()这个内置函数
     listTemp = inlist
